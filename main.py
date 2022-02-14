@@ -20,15 +20,15 @@ def extract(wav_file,t1,t2):
   wav.export("extracted.wav",format='wav')
 
 def create_melspectrogram(wav_file):
-  y,sr = librosa.load(wav_file,duration=30)
+  y,sr = librosa.load(wav_file,duration=2)
   topdB = 80
   melspec = librosa.power_to_db(librosa.feature.melspectrogram(y=y, sr=sr), top_db=topdB, ref=np.max)
   melspec = melspec/-topdB
-  cv2.imwrite('melspectrogram.png', cv2.resize(melspec, (1300,128))*255)
+  cv2.imwrite('melspectrogram.png', cv2.resize(melspec, (86,128))*255)
 
 def predict(model):
   image = cv2.imread('melspectrogram.png',0)
-  image = np.reshape(image,(1,128,1300))
+  image = np.reshape(image,(1,128,86))
   prediction = model.predict(image/255)
   prediction = prediction.reshape((10,))
   class_label = np.argmax(prediction)
@@ -36,7 +36,7 @@ def predict(model):
 
 class_labels = ['blues', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']
 
-model=keras.models.load_model('music_genre_rec_models/music_genre_rec_models')
+model=keras.models.load_model('music_genre_model_lite/music_genre_rec_model_lite')
 st.write("Music Genre Recognition App") 
 st.write("This is a Web App to predict genre of music")
 file = st.sidebar.file_uploader("Please Upload Mp3 Audio File Here or Use Demo Of App Below using Preloaded Music",type=["mp3"])
